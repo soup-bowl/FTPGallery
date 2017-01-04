@@ -41,15 +41,24 @@ class plunderer {
 	}
 
 	public function imagepick($ftpFilepath) {
-		$success = $this->ftp->get(__DIR__.'/cache/temp.'.pathinfo($ftpFilepath, PATHINFO_EXTENSION),$ftpFilepath, FTP_BINARY);
-
-		if ($success) {
-			$file = base64_encode(file_get_contents(__DIR__.'/cache/temp.'.pathinfo($ftpFilepath, PATHINFO_EXTENSION)));
-			unlink(__DIR__.'/cache/temp.'.pathinfo($ftpFilepath, PATHINFO_EXTENSION));
-			return 'data:image/'.pathinfo($ftpFilepath, PATHINFO_EXTENSION).';base64,'.$file;
-		} else {
-			return false;
+		switch ( pathinfo($ftpFilepath, PATHINFO_EXTENSION) ) {
+			case "jpg":
+			case "jpeg":
+			case "png":
+			case "gif":
+				$success = $this->ftp->get(__DIR__.'/cache/temp.'.pathinfo($ftpFilepath, PATHINFO_EXTENSION),$ftpFilepath, FTP_BINARY);
+				
+				if ($success) {
+					$file = base64_encode(file_get_contents(__DIR__.'/cache/temp.'.pathinfo($ftpFilepath, PATHINFO_EXTENSION)));
+					unlink(__DIR__.'/cache/temp.'.pathinfo($ftpFilepath, PATHINFO_EXTENSION));
+					return 'data:image/'.pathinfo($ftpFilepath, PATHINFO_EXTENSION).';base64,'.$file;
+				} else {
+					return false;
+				}
+			default:
+				return false;
 		}
+		
 	}
 
 	/**
